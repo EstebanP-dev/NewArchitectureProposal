@@ -1,0 +1,10 @@
+﻿global using Application.Abstractions.Messaging;
+global using Application.Models.Settings;
+global using ErrorOr;
+global using MediatR;
+global using Microsoft.Extensions.Options;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
