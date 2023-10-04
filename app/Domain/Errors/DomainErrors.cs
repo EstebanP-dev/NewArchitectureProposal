@@ -24,8 +24,10 @@ public static partial class DomainErrors
         return statusCode switch
         {
             HttpStatusCode.Unauthorized => AuthErrors.Login.UnAuthorized,
+            HttpStatusCode.BadRequest => Error.NotFound(description: JsonFormatRegex().Replace(message, "")),
             HttpStatusCode.Forbidden => UnExceptedError,
-            HttpStatusCode.NotFound | HttpStatusCode.BadRequest => Error.NotFound(description: JsonFormatRegex().Replace(message, "")),
+            HttpStatusCode.NotFound => UnExceptedError,
+            HttpStatusCode.InternalServerError => UnExceptedError,
             _ => throw new InvalidRequestCodeToMapSuchAsErrorException(),
         };
     }

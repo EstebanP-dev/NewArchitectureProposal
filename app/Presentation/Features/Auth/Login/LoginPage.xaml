@@ -30,5 +30,9 @@
                 Text="{Binding Password}" />
         </Grid>
         <Button Command="{Binding HandleSubmitCommand}" Text="Submit" />
+        <Label
+            IsVisible="{Binding IsBusy}"
+            Text="Cargando"
+            VerticalTextAlignment="Center" />
     </VerticalStackLayout>
 </pages:ContentPageBase>

@@ -26,8 +26,9 @@ internal sealed class WebApiServiceInstaller : IServiceInstaller
             IPreferenceService preferenceService = provider.GetService<IPreferenceService>();
             ApiSettings settings = provider.GetService<IOptions<ApiSettings>>().Value;
 
-            httpClient.BaseAddress = new Uri(settings.BaseUrl + settings.Version);
+            httpClient.BaseAddress = new Uri(settings.BaseUrl);
         })
+        .AddHttpMessageHandler<RetryHandler>()
         .AddHttpMessageHandler<LoggingHandler>()
         .AddHttpMessageHandler<GeneralAuthenticationHandler>()
         .ConfigurePrimaryHttpMessageHandler(() =>

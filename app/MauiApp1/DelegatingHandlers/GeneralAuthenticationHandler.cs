@@ -5,7 +5,7 @@ using Presentation.Abstractions.Dependencies;
 
 namespace MauiApp1.DelegatingHandlers;
 
-internal class GeneralAuthenticationHandler : DelegatingHandler
+internal sealed class GeneralAuthenticationHandler : DelegatingHandler
 {
     private readonly IPreferenceService _preferenceService;
     private readonly ApiSettings _apiSettings;

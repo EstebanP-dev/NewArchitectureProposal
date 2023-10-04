@@ -27,8 +27,10 @@ internal sealed class LoginCommandHandler : ICommandHandler<LoginCommand, string
         {
             HttpClient client = _httpClientFactory.CreateClient(nameof(ApiSettings.General));
 
+            var obj = client.BaseAddress;
+
             HttpResponseMessage response = await client.PostAsJsonAsync(
-                 requestUri: _options.General.Token,
+                 requestUri: _options.WebApi + _options.Version + _options.General.Token,
                  value: request,
                  cancellationToken: cancellationToken)
                 .ConfigureAwait(false);

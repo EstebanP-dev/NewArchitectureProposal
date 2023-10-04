@@ -9,6 +9,7 @@ internal sealed class LoggingHandler : DelegatingHandler
         try
         {
             Console.WriteLine("Before HTTP Request.");
+            Console.WriteLine(request.Headers);
 
             HttpResponseMessage result = await base.SendAsync(request, cancellationToken);
 
