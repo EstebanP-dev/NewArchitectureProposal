@@ -3,11 +3,15 @@ using MediatR;
 
 namespace Application.Abstractions.Messaging;
 
-public interface ICommand : IRequest<ErrorOr<Success>>
+public interface ICommandBase
 {
 }
 
-public interface ICommand<TResponse> : IRequest<ErrorOr<TResponse>>
+public interface ICommand : IRequest<ErrorOr<Success>>, ICommandBase
+{
+}
+
+public interface ICommand<TResponse> : IRequest<ErrorOr<TResponse>>, ICommandBase
     where TResponse : class
 {
 }

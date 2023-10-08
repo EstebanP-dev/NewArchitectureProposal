@@ -31,4 +31,9 @@ public static partial class DomainErrors
             _ => throw new InvalidRequestCodeToMapSuchAsErrorException(),
         };
     }
+
+    public static Error MapFromListOfErrors(IEnumerable<Error> errors)
+    {
+        return errors.FirstOrDefault();
+    }
 }

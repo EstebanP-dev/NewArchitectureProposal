@@ -21,7 +21,7 @@ public sealed partial class EmailValidator
     [Required]
     [MinLength(MinLength)]
     [MaxLength(MaxLength)]
-    [CustomValidation(typeof(EmailValidator), nameof(ValidateValue))]
+    [CustomValidation(typeof(EmailValidator), nameof(ValidateEmail))]
     [ObservableProperty]
     public string email;
 
@@ -33,12 +33,18 @@ public sealed partial class EmailValidator
 
     public EmailValidator()
     {
+        ValidateProperties();
         ShowError = false;
         Error = string.Empty;
     }
 
-    
-    public static ValidationResult ValidateValue(string email, ValidationContext context)
+    private void ValidateProperties()
+    {
+        ValidateAllProperties();
+        MapEmailErrors();
+    }
+
+    public static ValidationResult ValidateEmail(string email, ValidationContext context)
     {
         if (!EmailRegex().IsMatch(email))
         {
@@ -56,16 +62,20 @@ public sealed partial class EmailValidator
         if (e.PropertyName == nameof(Email))
         {
             ValidateAllProperties();
+            MapEmailErrors();
+        }
+    }
 
-            if (HasErrors)
-            {
-                Error = string.Join(Environment.NewLine, GetErrors().Select(x => x.ErrorMessage));
-                ShowError = true;
-            }
-            else
-            {
-                ShowError = false;
-            }
+    public void MapEmailErrors()
+    {
+        if (HasErrors)
+        {
+            Error = string.Join(Environment.NewLine, GetErrors().Select(x => x.ErrorMessage));
+            ShowError = true;
+        }
+        else
+        {
+            ShowError = false;
         }
     }
 }

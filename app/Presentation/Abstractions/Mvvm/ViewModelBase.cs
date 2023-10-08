@@ -46,7 +46,7 @@ public abstract partial class ViewModelBase : ObservableObject, IViewModelBase
             case nameof(IsBusy):
                 if (IsBusy)
                 {
-                    Dialogs.ShowLoading();
+                    Dialogs.ShowLoading("Loading", MaskType.Black);
                 }
                 else
                 {

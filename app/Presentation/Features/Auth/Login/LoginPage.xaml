@@ -12,8 +12,10 @@
         <Grid BindingContext="{Binding EmailValidator}" RowDefinitions="auto,50,auto">
             <Label Grid.Row="0" Text="{extensions:Translate LoginResource.Email_Field_Label}" />
             <Entry
+                x:Name="EmailField"
                 Grid.Row="1"
                 x:DataType="module:EmailValidator"
+                x:FieldModifier="Public"
                 IsPassword="False"
                 Text="{Binding Email}" />
             <Label

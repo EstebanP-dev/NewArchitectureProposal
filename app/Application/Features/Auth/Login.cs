@@ -1,5 +1,7 @@
 ﻿using Domain.Errors;
 using Domain.Features.Auth.Errors;
+using Domain.Helpers;
+using FluentValidation;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Json;
@@ -9,6 +11,26 @@ namespace Application.Features.Auth;
 
 public sealed record class LoginCommand(string Username, string Password)
     : ICommand<string>;
+
+internal sealed class LoginValidator : AbstractValidator<LoginCommand>
+{
+    public LoginValidator()
+    {
+        RuleFor(x => x.Username)
+            .NotEmpty()
+            .WithErrorCode("Validation.Email.Empty")
+            .WithMessage(LocalizationResourceHelper.Current["LoginResorce.Email_Field_Empty"]);
+
+        RuleFor(x => x.Username)
+            .EmailAddress()
+            .WithErrorCode("Validation.Email.Invalid")
+            .WithMessage(LocalizationResourceHelper.Current["LoginResorce.Email_Field_InvalidMatch"]);
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .MinimumLength(8);
+    }
+}
 
 internal sealed class LoginCommandHandler : ICommandHandler<LoginCommand, string>
 {
@@ -60,6 +82,10 @@ internal sealed class LoginCommandHandler : ICommandHandler<LoginCommand, string
         catch (HttpRequestException ex)
         {
             return DomainErrors.MapFromHttpResultMessage(ex.StatusCode ?? HttpStatusCode.InternalServerError, ex.Message);
+        }
+        catch (Exceptions.ValidationException ex)
+        {
+            return DomainErrors.MapFromListOfErrors(ex.Errors);
         }
     }
 }

@@ -8,5 +8,6 @@ public partial class LoginPage : ContentPageBase
 		: base(viewModel)
 	{
 		InitializeComponent();
+		EmailField.Focus();
 	}
 }

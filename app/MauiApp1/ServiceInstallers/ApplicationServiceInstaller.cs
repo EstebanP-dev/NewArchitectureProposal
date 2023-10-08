@@ -1,4 +1,5 @@
-﻿using Application.Models.Settings;
+﻿using Application.Abstractions.Behaviors;
+using Application.Models.Settings;
 using FluentValidation;
 using MauiApp1.Settings;
 using Microsoft.Extensions.Configuration;
@@ -11,10 +12,16 @@ internal sealed class ApplicationServiceInstaller : IServiceInstaller
     {
         services
             .AddMediatR(config =>
-                config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly));
+            {
+                config.RegisterServicesFromAssembly(Application.AssemblyReference.Assembly);
+
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
 
         services
-            .AddValidatorsFromAssembly(Application.AssemblyReference.Assembly);
+            .AddValidatorsFromAssembly(
+                assembly: Application.AssemblyReference.Assembly,
+                includeInternalTypes: true);
 
         services
             .ConfigureOptions<AppConfigureOptions<ApiSettings>>();

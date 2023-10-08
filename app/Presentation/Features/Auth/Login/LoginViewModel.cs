@@ -1,12 +1,15 @@
 ﻿using Acr.UserDialogs;
 using Application.Features.Auth;
 using CommunityToolkit.Mvvm.Input;
+using Presentation.Abstractions.Mvvm.Input;
+using System.ComponentModel;
+using System.Windows.Input;
 
 namespace Presentation.Features.Auth.Login;
 
 public sealed partial class LoginViewModel : ViewModelBase
 {
-    private readonly ISender _sender;
+    private readonly IMediator _sender;
 
     [ObservableProperty]
     EmailValidator emailValidator;
@@ -14,33 +17,65 @@ public sealed partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     public string password;
 
-    public LoginViewModel(ISender sender)
+    public ICommand HandleSubmitCommand { get; }
+
+    public LoginViewModel(IMediator sender, IServiceProvider provider)
     {
         _sender = sender;
 
         EmailValidator = new EmailValidator();
         Password = string.Empty;
+        HandleSubmitCommand = new CustomAsyncCommand(this, provider, HandleSubmit);
     }
 
-    [RelayCommand]
-    public async Task HandleSubmit()
+    private async Task HandleSubmit()
     {
-        if (EmailValidator.HasErrors)
-            return;
-
-        LoginCommand command = new(Username: EmailValidator.Email, Password: Password);
-
-        ErrorOr<string> result = await _sender
-            .Send(request: command)
-            .ConfigureAwait(true);
-
-        if (result.IsError)
+        try
         {
-            Dialogs.Alert(string.Join(';', result.ErrorsOrEmptyList.Select(e => e.Description)), "Error", "Ok");
+            if (EmailValidator.HasErrors)
+            {
+                EmailValidator.MapEmailErrors();
+                return;
+            }
+
+            LoginCommand command = new(Username: EmailValidator.Email, Password: Password);
+            
+            IsBusy = true;
+            ErrorOr<string> result = await _sender
+                .Send(request: command)
+                .ConfigureAwait(true);
+            IsBusy = false;
+
+            if (result.IsError)
+            {
+                Dialogs.Alert(string.Join(';', result.ErrorsOrEmptyList.Select(e => e.Description)), "Error", "Ok");
+            }
+            else
+            {
+                Dialogs.Alert(result.Value, "Success", "Ok");
+            }
         }
-        else
+        catch (Application.Exceptions.ValidationException ex)
         {
-            Dialogs.Alert(result.Value, "Success", "Ok");
+            foreach (Error error in ex.Errors)
+            {
+                switch (error.Code)
+                {
+                    case nameof(EmailValidator.Email):
+                        EmailValidator.Error = string.Join(Environment.NewLine, error.Description);
+                        break;
+                    case nameof(Password):
+                        Dialogs.Alert(string.Join(Environment.NewLine, error.Description), "Error", "Ok");
+                        break;
+                }
+            }
         }
+
+        throw new NotImplementedException();
+    }
+
+    public override void Initialize()
+    {
+        base.Initialize();
     }
 }

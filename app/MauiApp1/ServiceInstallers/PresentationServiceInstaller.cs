@@ -11,21 +11,27 @@ internal sealed class PresentationServiceInstaller : IServiceInstaller
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
         services
-            .Scan(scan => scan.FromAssemblies(Presentation.AssemblyReference.Assembly)
+            .Scan(scan => scan.FromAssemblies(
+                Presentation.AssemblyReference.Assembly,
+                AssemblyReference.Assembly)
                 .AddClasses(x => x.AssignableTo<ITransientDependency>())
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsSelfWithInterfaces()
                 .WithTransientLifetime());
         
         services
-            .Scan(scan => scan.FromAssemblies(Presentation.AssemblyReference.Assembly)
+            .Scan(scan => scan.FromAssemblies(
+                Presentation.AssemblyReference.Assembly,
+                AssemblyReference.Assembly)
                 .AddClasses(x => x.AssignableTo<IScopeDependency>())
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsSelfWithInterfaces()
                 .WithScopedLifetime());
         
         services
-            .Scan(scan => scan.FromAssemblies(Presentation.AssemblyReference.Assembly)
+            .Scan(scan => scan.FromAssemblies(
+                Presentation.AssemblyReference.Assembly,
+                AssemblyReference.Assembly)
                 .AddClasses(x => x.AssignableTo<ISingletonDependency>())
                 .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                 .AsSelfWithInterfaces()
